@@ -5,8 +5,6 @@ const validateBody = require("../middlewares/validateBody");
 const moment=require("moment");
 const router = express.Router();
 
-
-
 const productFile = new Container('files/products.txt');
 const messageFile = new Container('files/messages.txt');
 
@@ -60,7 +58,7 @@ router.post("/products", express.json(), validateBody, async (req, res) => {
   }
 });
 
-router.post("/messages", express.json(), async (req, res) => {
+router.post("/messages", express.json(), validateBody, async (req, res) => {
   try {
     const { email, texto } = req.body;
     let newMessage = {};
@@ -74,7 +72,7 @@ router.post("/messages", express.json(), async (req, res) => {
     }
     messages.push(newMessage);
     await fs.promises.writeFile(messageFile.fileName, JSON.stringify(messages));
-    res.render("/");
+    res.redirect("/");
   } catch (error) {
     return res.status(404).send({ error: error.message });
   }

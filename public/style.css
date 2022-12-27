@@ -4,4 +4,12 @@ body {
  .section{
     background-color: aqua;
     margin-left: 4em;
+    margin-right: 10em;
+ }
+ .section form{
+   padding-top: 3em;
+   padding-bottom: 3em;
+ }
+ .separacion{
+   padding-left: 3em;
  }
