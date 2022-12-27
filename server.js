@@ -2,59 +2,54 @@ const express = require("express");
 const app = require("express")();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const fs = require("fs");
 const exphbs = require("express-handlebars");
 
-const path=require("path");
+const path = require("path");
 
 const router = require("./Routes/products");
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
 
 const port = 8080;
 
-app.use(express.static("public"));
+
 app.use('/api', router)
+app.use(express.static("public"));
 
 //Handlebars
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs.engine({
-  layoutsDir: app.get('views')+ '/layouts',
-  partialsDir: app.get('views')+ '/partials',
+  layoutsDir: app.get('views') + '/layouts',
+  partialsDir: app.get('views') + '/partials',
   extname: '.hbs'
 }))
 
 
 app.set('view engine', 'hbs');
 
-let allProducts=[{}];
+let allProducts = [{}];
 
+let messages = fs.readFileSync("files/messages.txt", "utf-8");
+messages = JSON.parse(messages);
+const renew= (data) =>{
+  if(data.length> messages.length){
+    messages=data;
+  }
+}
 app.get("/", (req, res) => {
-  const context={
+  const context = {
     title: "Producto",
     price: "Precio",
-    thumbnail:"imagen",
+    thumbnail: "imagen",
     allProducts,
-    printProducts:false
-}
- 
-res.render("index", context);
-});
+    printProducts: false,
+    messages:renew
+  }
 
-const messages = [
-  {
-    author: "Juan",
-    text: "Hola que tal?",
-  },
-  {
-    author: "Pedro",
-    text: "Muy bien y vos?",
-  },
-  {
-    author: "Ana",
-    text: "Genial!!!",
-  },
-];
+  res.render("index", context);
+});
 
 io.on("connection", (socket) => {
   console.log("usuario conectado " + socket.id);

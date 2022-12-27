@@ -2,10 +2,11 @@ const express = require("express");
 const Container = require('../class');
 const fs = require("fs");
 const validateBody = require("../middlewares/validateBody");
-const moment=require("moment")
-
-
+const moment=require("moment");
 const router = express.Router();
+
+
+
 const productFile = new Container('files/products.txt');
 const messageFile = new Container('files/messages.txt');
 
@@ -52,6 +53,7 @@ router.post("/products", express.json(), validateBody, async (req, res) => {
     }
     products.push(newProduct);
     await fs.promises.writeFile(productFile.fileName, JSON.stringify(products));
+    
     res.redirect("/");
   } catch (error) {
     return res.status(404).send({ error: error.message });
@@ -72,7 +74,7 @@ router.post("/messages", express.json(), async (req, res) => {
     }
     messages.push(newMessage);
     await fs.promises.writeFile(messageFile.fileName, JSON.stringify(messages));
-    res.redirect("/");
+    res.render("/");
   } catch (error) {
     return res.status(404).send({ error: error.message });
   }
@@ -132,5 +134,6 @@ router.delete("/products/:id", async (req, res) => {
   }
 
 });
+
 
 module.exports = router;
